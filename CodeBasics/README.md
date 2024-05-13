@@ -115,6 +115,27 @@ Result:
 ![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
 
 
+# Adhoc request #10:
+Get the Top 3 products in each division that have a high total_sold_quantity in the fiscal_year 2021? The final output contains these
+fields, division, product_code, product, total_sold_quantity, rank_order
+
+````
+WITH CTE1 AS (select d.product_code, d.division, d.product, sum(f.sold_quantity) as total_sold_quantity
+	from dim_product d left join fact_sales_monthly as f
+	on d.product_code = f.product_code
+	where f.fiscal_year = "2021"
+	group by d.product_code, d.division, d.product),
+    CTE2 AS (Select *, rank()over(partition by division order by total_sold_quantity desc)as rank_order
+	from CTE1)
+    SELECT * FROM CTE2
+    where rank_order in (1,2,3);
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/6522a4e7-3ec2-4a82-8089-ae77e4dc337e)
+
+
+
 
 
 
