@@ -1,6 +1,6 @@
 # PROVIDE INSIGHTS TO MANAGEMENT IN CONSUMER GOODS
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/e8cab7bc-96e1-485a-9805-fff3f5b289c3)
+<img src="https://github.com/rajathratnakaran/SQL-projects/assets/92428713/e8cab7bc-96e1-485a-9805-fff3f5b289c3" width="600" height="400">
 
 ## INTRODUCTION
 
@@ -46,5 +46,77 @@ Result:
 
 
 ![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/367d0612-8064-4923-ae23-364c2973cd2a)
+
+## Adhoc request #3:
+Provide a report with all the unique product counts for each segment and sort them in descending order of product counts. The final output contains 2 fields, segment and product_count
+
+````
+SELECT segment,count(product_code) as product_count FROM dim_product
+group by segment
+order by product_count desc;
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/25767221-6035-4386-8149-83607e007170)
+
+## Adhoc request #4:
+Follow-up: Which segment had the most increase in unique products in 2021 vs 2020? The final output contains these fields,
+segment, product_count_2020, product_count_2021, difference
+
+````
+with X as (select d.segment AS Segment, count(distinct(d.product_code)) as A from dim_product d
+			left join fact_sales_monthly f on d.product_code = f.product_code
+			where f.fiscal_year = '2021'
+			group by d.segment),
+	Y as (select d.segment as Segment, count(distinct(d.product_code)) as B from dim_product d
+			left join fact_sales_monthly f on d.product_code = f.product_code
+			where f.fiscal_year = '2020'
+			group by d.segment)
+select X.Segment,X.A as product_count_2021,Y.B as product_count_2020, (X.A - Y.B) AS difference from X,Y
+where X.Segment = Y.Segment;
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/8753dcfb-ff7b-4df1-a17b-9c894217018e)
+
+# Adhoc request #5:
+Get the products that have the highest and lowest manufacturing costs. The final output should contain these fields, product_code
+product, manufacturing_cost
+
+````
+Select * from 
+	(Select product_code, max(manufacturing_cost) as manufacturing_cost from fact_manufacturing_cost
+	group by product_code
+	order by manufacturing_cost desc
+	limit 1) as X
+	union 
+	(Select product_code, min(manufacturing_cost) as min from fact_manufacturing_cost
+	group by product_code
+	limit 1);
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/612ad228-9b59-4787-ab0c-e4a3a64a873c)
+
+# Adhoc request #6:
+Generate a report which contains the top 5 customers who received an average high pre_invoice_discount_pct for the fiscal year 2021 
+and in the Indian market. The final output contains these fields, customer_code, customer, average_discount_percentage
+
+````
+select f.customer_code, d.customer, f.pre_invoice_discount_pct as average_discount_percentage
+	from dim_customer d left join fact_pre_invoice_deductions f
+	on d.customer_code = f.customer_code
+    where market ="India" and f.fiscal_year = "2021"
+    order by average_discount_percentage desc
+    Limit 5;
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
+
+
+
+
+
 
 
