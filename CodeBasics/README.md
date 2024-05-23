@@ -114,6 +114,28 @@ Result:
 
 ![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
 
+# Adhoc request #9:
+
+````
+with cte1 as (Select customer_code, product_code,sold_quantity from fact_sales_monthly
+			  where fiscal_year = '2021'),
+	cte2 as	(Select c.customer_code,c.product_code, (c.sold_quantity * d.gross_price) as sold_q 
+					 from cte1 c left join fact_gross_price d
+                     on c.product_code = d.product_code),
+	cte3 as (select a.channel, c.sold_q from dim_customer a left join cte2 c
+						on a.customer_code = c.customer_code),
+	cte4 as (select channel, round(sum(sold_q)/1000000, 2) as gross_sales_mln from cte3
+				group by channel),
+	cte5 as (select sum(gross_sales_mln) as total from cte4)
+	select a.channel, concat(a.gross_sales_mln,' ','M') AS gross_sales_mln,
+                          concat(round((a.gross_sales_mln/b.total)*100,2),' ','%') as percentage
+	from cte4 a,cte5 b
+	order by percentage desc;
+````
+Result:
+
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/0eb45516-d7f0-4f75-b852-ab44bec97169)
+
 
 # Adhoc request #10:
 Get the Top 3 products in each division that have a high total_sold_quantity in the fiscal_year 2021? The final output contains these
