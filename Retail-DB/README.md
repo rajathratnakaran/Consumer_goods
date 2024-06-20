@@ -1,5 +1,6 @@
-Order Management Schema Details
-This document captures the scenario of simple order management functionality of an online retail store.
+
+# This document tries to solve some of the scenarios of a simple order management functionality database of an online retail store.
+
 Typical purchase scenario: A customer places an order for N products specifying quantity for each line item of the order. 
 Every product belongs to a product class (or category). All products ordered
 in one order, are shipped to customer’s address (in India or outside) by a shipper in one shipment.
