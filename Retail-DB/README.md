@@ -24,12 +24,26 @@ c. If the category is 2052, increase the price by 600.
 
 SQL Query:
 ```
-select distinct market from dim_customer
-where customer = "Atliq Exclusive" and region ="APAC";
+select product_class_code, product_id, product_desc,
+  case when PRODUCT_CLASS_CODE = 2050 then (PRODUCT_PRICE + 2000)
+	   when PRODUCT_CLASS_CODE = 2051 then (PRODUCT_PRICE + 500)
+       when PRODUCT_CLASS_CODE = 2052 then (PRODUCT_PRICE + 600)
+       else product_price
+       end as product_price
+from product
+order by product_class_code desc;
 ```
 
 Result:
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/57911fe4-bf92-47b0-a666-1f93f31d7285)
+For demostartion purpose the data is limited to category 2050,2051,2052. 
+
+Before: 
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/52c16c44-96bd-40e0-a10a-de5c2493de3a)
+
+After:
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/3c166e64-0d33-4ee6-9d30-151864df2742)
+
+
 
 
 
