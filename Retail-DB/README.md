@@ -100,14 +100,24 @@ Write a query to Show the count of cities in all countries other than USA & MALA
 
 SQL Query:
 ```
-select country, count(city) as Number_of_cities from address
+select country,count(city) as city_count  from
+	 (select country,city from address
+	  where country not in ("usa","malaysia")
+      group by country,city) as m
 group by country
-having country not in ("USA", "MALAYSIA")
-and count(city)>1;	
+having count(city)>1;	
 ```
 
-Result:  
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/90c49eb6-f498-422c-9807-a8730d0b8207)
+using distinct:
+```
+select country, count(distinct(city)) as city_count from address
+group by country 
+having country  not in ("USA","MALAYSIA")
+and count(distinct(city))>1;
+```
+Result:   
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/d7ac373e-db2b-4525-be41-db4d362f2c4a)
+
 
 
 
