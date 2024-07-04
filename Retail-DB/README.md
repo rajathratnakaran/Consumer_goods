@@ -95,6 +95,20 @@ Result:
 For demostartion purpose the data is limited 23 rows. 
 ![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/92c942fc-708a-4067-bd2f-a0e10170ab57)
 
+## Adhoc request #3:
+Write a query to Show the count of cities in all countries other than USA & MALAYSIA, with more than 1 city, in the descending order of CITIES. (2 rows) [NOTE: ADDRESS TABLE, Do not use Distinct]
+
+SQL Query:
+```
+select country, count(city) as Number_of_cities from address
+group by country
+having country not in ("USA", "MALAYSIA")
+and count(city)>1;	
+```
+
+Result:  
+![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/90c49eb6-f498-422c-9807-a8730d0b8207)
+
 
 
 
