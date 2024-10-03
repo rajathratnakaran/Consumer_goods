@@ -164,6 +164,7 @@ Result:
 
 # Adhoc request #9:
 
+Which channel helped to bring more gross sales in the fiscal year 2021 and the percentage of contribution? The final output contains these fields,channel, gross_sales_mln,percentage
 ````
 with cte1 as (select f.product_code,f.customer_code,f.sold_quantity, c.channel from dim_customer c left join fact_sales_monthly f
               on c.customer_code = f.customer_code
@@ -185,7 +186,6 @@ Result:
 # Adhoc request #10:
 Get the Top 3 products in each division that have a high total_sold_quantity in the fiscal_year 2021? The final output contains these
 fields, division, product_code, product, total_sold_quantity, rank_order
-
 ````
 with cte1 as (select p.division, p.product_code, p.product, sum(s.sold_quantity) as sold_quantity
               from dim_product p left join fact_sales_monthly s
