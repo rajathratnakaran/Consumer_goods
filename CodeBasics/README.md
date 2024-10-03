@@ -120,23 +120,6 @@ Result:
 
 ![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
 
-# Adhoc request #6:
-Generate a report which contains the top 5 customers who received an average high pre_invoice_discount_pct for the fiscal year 2021 
-and in the Indian market. The final output contains these fields, customer_code, customer, average_discount_percentage
-
-````
-SELECT F.customer_code,C.customer, ROUND(AVG(F.pre_invoice_discount_pct),2) AS average_discount_percentage
-FROM fact_pre_invoice_deductions f LEFT JOIN dim_customer c
-ON F.customer_code = C.customer_code
-WHERE fiscal_year = '2021'
-GROUP BY C.CUSTOMER
-ORDER BY pre_invoice_discount_pct DESC
-LIMIT 5;
-````
-Result:
-
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
-
 # Adhoc request #7:
 Get the complete report of the Gross sales amount for the customer “Atliq Exclusive” for each month. This analysis helps to get an idea of low and high-performing months and take strategic decisions.The final report contains these columns: Month,Year,Gross sales Amount
 ````
