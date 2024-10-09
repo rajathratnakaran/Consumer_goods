@@ -22,14 +22,18 @@ Provide the list of markets in which customer "Atliq Exclusive" operates its bus
 
 SQL Query:
 ```
-SELECT distinct(MARKET) FROM dim_customer
+SELECT distinct(MARKET) as Market FROM dim_customer
 WHERE REGION = "APAC"
 AND CUSTOMER = "Atliq Exclusive";
 ```
 
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/57911fe4-bf92-47b0-a666-1f93f31d7285)
+![image](https://github.com/user-attachments/assets/70bafb5d-a8aa-4ba6-a3f9-ac46b44c27c6)
+
+In the "APAC" region "Atliq Exclusive" operates at 8 regions.
+Interesting fact is that 50% of "Atliq Exclusive" operating region comes under the "APAC" the rest is distributed between EU and NA
+with 6 and 2 regions respectively. 
 
 ## Adhoc request #2:
 What is the percentage of unique product increase in 2021 vs. 2020? The final output contains these fields, unique_products_2020
@@ -45,8 +49,7 @@ WITH CTE1 AS (SELECT COUNT(DISTINCT(PRODUCT_CODE)) AS PC_2020 FROM fact_sales_mo
 
 Result:
 
-
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/367d0612-8064-4923-ae23-364c2973cd2a)
+![image](https://github.com/user-attachments/assets/a8bbced9-bb1c-40c7-9524-575f09e890b4)
 
 ## Adhoc request #3:
 Provide a report with all the unique product counts for each segment and sort them in descending order of product counts. The final output contains 2 fields, segment and product_count
@@ -58,31 +61,30 @@ order by product_count desc;
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/25767221-6035-4386-8149-83607e007170)
+![image](https://github.com/user-attachments/assets/d6370f7c-da00-4137-b40a-365856540ab8)
 
 ## Adhoc request #4:
 Follow-up: Which segment had the most increase in unique products in 2021 vs 2020? The final output contains these fields,
 segment, product_count_2020, product_count_2021, difference
 
 ````
-with cte1 as (select distinct(p.segment) as seg,count(distinct(p.product_code)) as PC_2020
-		from dim_product p left join fact_sales_monthly f
-                on p.product_code = f.product_code
-		where f.fiscal_year = '2020'
-		group by p.segment),
-	 cte2 as (select distinct(p.segment) as seg,count(distinct(p.product_code)) as PC_2021
-		from dim_product p left join fact_sales_monthly f
-		on p.product_code = f.product_code
-		where f.fiscal_year = '2021'
-		group by p.segment)   
-                select a.seg,a.pc_2020 as product_count_2020,b.pc_2021 as product_count_2021, (b.PC_2021 - a.PC_2020) as difference
-		from cte1 a inner join cte2 b
-                on a.seg = b.seg
-                order by difference desc;
+with cte1 as (select distinct(p.segment) as seg,count(distinct(p.product_code)) as PC_2020 from dim_product p left join fact_sales_monthly f
+				on p.product_code = f.product_code
+				where f.fiscal_year = '2020'
+				group by p.segment),
+	 cte2 as (select distinct(p.segment) as seg,count(distinct(p.product_code)) as PC_2021 from dim_product p left join 		 
+                  fact_sales_monthly f
+				on p.product_code = f.product_code
+				where f.fiscal_year = '2021'
+				group by p.segment)   
+                select a.seg as segment,a.pc_2020 as product_count_2020,b.pc_2021 as product_count_2021, (b.PC_2021 - a.PC_2020) as 
+                                difference from cte1 a inner join cte2 b
+                                on a.seg = b.seg
+                                order by difference desc;
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/8753dcfb-ff7b-4df1-a17b-9c894217018e)
+![image](https://github.com/user-attachments/assets/f59f8024-2dc9-4a70-9152-40717fffb3dd)
 
 # Adhoc request #5:
 Get the products that have the highest and lowest manufacturing costs. The final output should contain these fields, product_code
@@ -101,15 +103,14 @@ WHERE manufacturing_cost = (SELECT MIN(manufacturing_cost) FROM fact_manufacturi
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/612ad228-9b59-4787-ab0c-e4a3a64a873c)
+![image](https://github.com/user-attachments/assets/f33ef77c-eea8-4567-9e1a-b0119e36ef21)
 
 # Adhoc request #6:
 Generate a report which contains the top 5 customers who received an average high pre_invoice_discount_pct for the fiscal year 2021 
 and in the Indian market. The final output contains these fields, customer_code, customer, average_discount_percentage
 
 ````
-SELECT F.customer_code,C.customer, ROUND(AVG(F.pre_invoice_discount_pct),2) AS average_discount_percentage
-FROM fact_pre_invoice_deductions f LEFT JOIN dim_customer c
+SELECT F.customer_code,C.customer, ROUND(AVG(F.pre_invoice_discount_pct),2) AS average_discount_percentage FROM fact_pre_invoice_deductions f LEFT JOIN dim_customer c
 ON F.customer_code = C.customer_code
 WHERE fiscal_year = '2021'
 GROUP BY C.CUSTOMER
@@ -118,27 +119,27 @@ LIMIT 5;
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/09c72098-0a5c-4f31-b640-b2fd10606083)
+![image](https://github.com/user-attachments/assets/4d209c68-11aa-415d-89fe-031675e6b3b4)
 
 # Adhoc request #7:
 Get the complete report of the Gross sales amount for the customer “Atliq Exclusive” for each month. This analysis helps to get an idea of low and high-performing months and take strategic decisions.The final report contains these columns: Month,Year,Gross sales Amount
 ````
-with cte1 as (select s.product_code,s.sold_quantity,s.date as dates
-	      from dim_customer c left join fact_sales_monthly s
-              on c.customer_code=s.customer_code
-              where customer = 'Atliq Exclusive'),
-     cte2 as (select CTE1.DATES AS DATES, monthname(cte1.dates) as Month, year(cte1.dates) as Year,(cte1.sold_quantity*f.gross_price)  
-              as GS
-              from cte1 left join fact_gross_price f
-              on cte1.product_code = f.product_code
-              )
-     select Month,Year,concat(ROUND((sum(GS)/1000000),2),' M') as gs from cte2
+with cte1 as (select s.product_code,s.sold_quantity,s.date as dates from dim_customer c
+			  left join fact_sales_monthly s
+			  on c.customer_code=s.customer_code
+			  where customer = 'Atliq Exclusive'),
+	 cte2 as (select CTE1.DATES AS DATES, monthname(cte1.dates) as Month, year(cte1.dates) as Year, 
+                          (cte1.sold_quantity*f.gross_price)  as GS from cte
+                          left join fact_gross_price f
+                          on cte1.product_code = f.product_code
+                   )
+     select Month,Year,concat(ROUND((sum(GS)/1000000),2),' M') as Gross_sales_Amount  from cte2
      group by month,year
      order by year, month(cte2.dates);
 ````
 Result:
 
-![image](https://github.com/user-attachments/assets/82096e84-b5ce-4d53-a9a8-3530d0ed562b)
+![image](https://github.com/user-attachments/assets/5a2a666d-86a1-4efe-bbd4-c61ee74737e8)
 
 # Adhoc request #8:
 In which quarter of 2020, got the maximum total_sold_quantity? The final output contains these fields sorted by the total_sold_quantity, 
@@ -160,7 +161,7 @@ order by total_sold_quantity desc;
 ````
 Result:
 
-![image](https://github.com/user-attachments/assets/cb0afb5e-75b5-4f22-80a6-29c4fc4996a0)
+![image](https://github.com/user-attachments/assets/69ffd36e-d0d9-433f-8909-3e8d11e806b6)
 
 # Adhoc request #9:
 
@@ -180,8 +181,7 @@ with cte1 as (select f.product_code,f.customer_code,f.sold_quantity, c.channel f
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/0eb45516-d7f0-4f75-b852-ab44bec97169)
-
+![image](https://github.com/user-attachments/assets/b77786bf-9006-418a-94fb-207a6b567601)
 
 # Adhoc request #10:
 Get the Top 3 products in each division that have a high total_sold_quantity in the fiscal_year 2021? The final output contains these
@@ -200,7 +200,8 @@ with cte1 as (select p.division, p.product_code, p.product, sum(s.sold_quantity)
 ````
 Result:
 
-![image](https://github.com/rajathratnakaran/SQL-projects/assets/92428713/6522a4e7-3ec2-4a82-8089-ae77e4dc337e)
+![image](https://github.com/user-attachments/assets/a276f36f-2b2a-40b7-af90-311e419cf367)
+
 
 
 
