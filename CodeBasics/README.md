@@ -14,8 +14,6 @@ Imagine yourself as the applicant for this role and perform the following task
 
 1.    There are 10 ad hoc requests for which the business needs insights.
 2.    You need to run a SQL query to answer these requests. 
-3.    The target audience of this dashboard is top-level management - hence you need to create a presentation to show the insights.
-4.    Be creative with your presentation.
 
 ## Adhoc request #1:
 Provide the list of markets in which customer "Atliq Exclusive" operates its business in the APAC region.
