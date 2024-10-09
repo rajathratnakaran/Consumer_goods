@@ -22,14 +22,14 @@ Provide the list of markets in which customer "Atliq Exclusive" operates its bus
 
 SQL Query:
 ```
-SELECT distinct(MARKET) as Market FROM dim_customer
+SELECT distinct(MARKET) as Market as Market FROM dim_customer
 WHERE REGION = "APAC"
 AND CUSTOMER = "Atliq Exclusive";
 ```
 
 Result:
 
-![image](https://github.com/user-attachments/assets/70bafb5d-a8aa-4ba6-a3f9-ac46b44c27c6)
+![image](https://github.com/user-attachments/assets/73862ff8-7b65-430b-a236-18dab15be279)
 
 In the "APAC" region "Atliq Exclusive" operates at 8 regions.
 Interesting fact is that 50% of "Atliq Exclusive" operating region comes under the "APAC" the rest is distributed between EU and NA
